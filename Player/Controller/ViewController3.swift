@@ -39,6 +39,7 @@ class ViewController3: UIViewController {
     
 //    private let m3u8Url =  "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8" //4
     private let m3u8Url =  "https://res.cloudinary.com/triggerz-eu-cld/raw/upload/v1613557055/HabitDrivers_for_Teams-subtitile-test.m3u8" //1
+//    private let m3u8Url =  "https://vodmstag-cdn.toffeelive.com/d7471c4248c9f67bfd756c08d14a1756/man" //1adshcghc
 //    private let m3u8Url =  "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" //0
 //    private let m3u8Url =  "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8" //0
     
@@ -56,7 +57,7 @@ class ViewController3: UIViewController {
         }
     }
     
-    var selectedSubtitle: Subtitle?
+    var selectedSubtitle: Subtitle? = nil
     
     var showCC = false
     
@@ -94,8 +95,9 @@ class ViewController3: UIViewController {
 //        playerLayer.frame = self.playerView.bounds
 //        playerView.layoutSublayers(of: playerLayer)
         
-        if subtitles != nil {
+        if !subtitles.isEmpty {
             self.ccButton.isHidden = false
+//            self.subtitlesTableView.reloadData()
         } else {
             self.ccButton.isHidden = true
         }
@@ -116,8 +118,10 @@ class ViewController3: UIViewController {
         subtitlesTableView.register(UINib(nibName: "SubtitlesTableViewCell", bundle: nil), forCellReuseIdentifier: SubtitlesTableViewCell.identifier)
     
         ccButton.isHidden = !showCC
+        ccButton.tintColor = .systemGray
         
         subtitlesStackView.layer.cornerRadius = 10
+//        subtitlesTableView.layer.cornerRadius = 10
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -167,7 +171,7 @@ class ViewController3: UIViewController {
 //            playerViewController.addSubtitles()
 //            playerViewController.subtitleLabel?.textColor = UIColor.red
 //
-            parseSub()
+        parseSub()
 
             addChild(playerViewController)
             playerView.addSubview(playerViewController.view)
@@ -200,6 +204,8 @@ class ViewController3: UIViewController {
         }
 //        parseSub()
         initSlider()
+        loader.stopAnimating()
+
     }
     
     private func initSlider() {
@@ -231,12 +237,14 @@ class ViewController3: UIViewController {
             self.subtitles = subtitles
             
             self.showCC = true
+            
+            self.subtitlesTableView.reloadData()
 
-            // Add subtitles
-            self.playerViewController.open(fileFromRemote: self.subtitles[0].url)
-            //            self.playerViewController.open(fileFromRemote: subtitleRemoteUrl!)
-            self.playerViewController.addSubtitles()
-            self.playerViewController.subtitleLabel?.textColor = UIColor.red
+//            // Add subtitles
+//            self.playerViewController.open(fileFromRemote: self.subtitles[0].url)
+//            //            self.playerViewController.open(fileFromRemote: subtitleRemoteUrl!)
+//            self.playerViewController.addSubtitles()
+//            self.playerViewController.subtitleLabel?.textColor = UIColor.red
 
             for subtitle in subtitles {
                 print("Language: \(subtitle.language), URL: \(subtitle.url)")
@@ -245,36 +253,40 @@ class ViewController3: UIViewController {
         
     }
     
-    @IBAction func adjustBrightness(_ sender: Any) {
+    @IBAction private func adjustBrightness(_ sender: Any) {
         print("adjustBrightness")
         UIScreen.main.brightness = CGFloat(brightnessSlider.value)
     }
     
-    @IBAction func adjustVolume(_ sender: Any) {
+    @IBAction private func adjustVolume(_ sender: Any) {
         print("adjustVolume")
         videoPlayer?.volume = volumeSlider.value
     }
     
-    @IBAction func seekBarMoved(_ sender: Any) {
+    @IBAction private func seekBarMoved(_ sender: Any) {
         print("seekBarMoved")
         let selectedTime: CMTime = CMTimeMake(value: Int64(Float64(seekBarSlider.value) * 1000 as Float64), timescale: 1000)
         
         videoPlayer?.seek(to: selectedTime)
     }
     
-    @IBAction func subtitlesPressed(_ sender: Any) {
+    @IBAction private func subtitlesPressed(_ sender: Any) {
         print("subtitlesPressed")
         subtitleLabel.isHidden = !subtitleLabel.isHidden
 //        subtitlesTableView.isHidden = !subtitlesTableView.isHidden
         subtitlesStackView.isHidden = !subtitlesStackView.isHidden
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+//            self.subtitlesStackView.isHidden = true
+//        }
     }
     
-    @IBAction func refreshPressed(_ sender: Any) {
+    @IBAction private func refreshPressed(_ sender: Any) {
         print("refreshPressed")
         videoPlayer?.seek(to: .zero)
     }
     
-    @IBAction func rewindPressed(_ sender: Any) {
+    @IBAction private func rewindPressed(_ sender: Any) {
         print("rewindPressed")
         
         let moveBackword: Float64 = 5
@@ -298,7 +310,7 @@ class ViewController3: UIViewController {
 //        player.play()
     }
     
-    @IBAction func pausePressed(_ sender: Any) {
+    @IBAction private func pausePressed(_ sender: Any) {
         print("pausePressed")
         if isPlaying {
             videoPlayer?.pause()
@@ -308,7 +320,7 @@ class ViewController3: UIViewController {
         }
     }
     
-    @IBAction func playPressed(_ sender: Any) {
+    @IBAction private func playPressed(_ sender: Any) {
         print("playPressed")
         if !isPlaying {
             videoPlayer?.play()
@@ -318,7 +330,7 @@ class ViewController3: UIViewController {
         }
     }
     
-    @IBAction func fastForwardPressed(_ sender: Any) {
+    @IBAction private func fastForwardPressed(_ sender: Any) {
         print("fastForwardPressed")
         
         let moveForword : Float64 = 5
@@ -341,7 +353,7 @@ class ViewController3: UIViewController {
 
     }
     
-    @IBAction func nextButtonPressed(_ sender: Any) {
+    @IBAction private func nextButtonPressed(_ sender: Any) {
         print("nextButtonPressed")
         
         if isPlaying {
@@ -351,23 +363,27 @@ class ViewController3: UIViewController {
             pauseButton.isEnabled = false
         }
         
-//        if let vc = storyboard?.instantiateViewController(withIdentifier: "ViewController4") as? ViewController4 {
+        if let vc = storyboard?.instantiateViewController(withIdentifier: "ViewController4") as? ViewController4 {
 //        if let vc = storyboard?.instantiateViewController(withIdentifier: "ViewController2") as? ViewController2 {
 //        if let vc = storyboard?.instantiateViewController(withIdentifier: "ViewController3") as? ViewController3 {
-//            self.navigationController?.pushViewController(vc, animated: true)
-//        }
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }
 
 
 extension ViewController3: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return subtitles.count
+        return subtitles.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SubtitlesTableViewCell.identifier, for: indexPath) as? SubtitlesTableViewCell else { return UITableViewCell() }
-        cell.subtitleLabel.text = subtitles[indexPath.row].language
+        if indexPath.row == 0 {
+            cell.subtitleLabel.text = "Off"
+        } else {
+            cell.subtitleLabel.text = subtitles[indexPath.row - 1].language
+        }
         return cell
     }
     
@@ -393,10 +409,31 @@ extension ViewController3: UITableViewDelegate {
             
             cell.setSelected(true, animated: true)
             
-            selectedSubtitle = subtitles[indexPath.row]
-            print("selected ", indexPath.row, selectedSubtitle )
+//            tableView.deselectRow(at: tableView.indexPathForSelectedRow!, animated: true)
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            if indexPath.row == 0 {
+                selectedSubtitle = nil
+                print("selected ", indexPath.row, selectedSubtitle )
+                
+                self.playerViewController.subtitleLabel?.textColor = .clear
+                ccButton.tintColor = .systemGray
+                
+                
+            } else {
+                selectedSubtitle = subtitles[indexPath.row - 1]
+                print("selected ", indexPath.row, selectedSubtitle )
+                ccButton.tintColor = .systemBlue
+                
+                // Add subtitles
+                self.playerViewController.open(fileFromRemote: self.selectedSubtitle!.url)
+                
+                self.playerViewController.addSubtitles()
+                self.playerViewController.subtitleLabel?.textColor = UIColor.white
+                self.playerViewController.subtitleLabel?.font = UIFont(name: "System", size: 6)
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.subtitleLabel.isHidden = true
                 self.subtitlesStackView.isHidden = true
             }
         }
