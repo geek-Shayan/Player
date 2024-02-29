@@ -17,32 +17,19 @@ class BottomSheetSubtitlesTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
         
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+//        selectionStyle = .none
     }
-    
-//    func selection(_ selected: Bool) {
-//        selectionImage.isHidden = !selected
-//
-//        if selected {
-//            subtitleLabel.textColor = .tintColor
-//        }
-//        else {
-//            subtitleLabel.textColor = .label
-//        }
-//    }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
-//        super.setSelected(selected, animated: animated)
-//        super.setSelected(false, animated: false)
-
+        super.setSelected(selected, animated: animated)
+        
         selectionImage.isHidden = !selected
 
         if selected {
             subtitleLabel.textColor = .tintColor
-        }
-        else {
+        } else {
             subtitleLabel.textColor = .label
         }
     }

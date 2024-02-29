@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PzB-rw-lnA">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="50Y-ih-ayT">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
@@ -511,7 +511,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ugn-Bv-7ge">
                                 <rect key="frame" x="10" y="236.33333333333337" width="373" height="248.66666666666663"/>
                                 <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="vTQ-y5-ITI">
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="vTQ-y5-ITI">
                                         <rect key="frame" x="168" y="105.66666666666666" width="37" height="37"/>
                                         <color key="color" systemColor="systemRedColor"/>
                                     </activityIndicatorView>
@@ -649,7 +649,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZRP-Nc-pKI" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3624" y="-35"/>
+            <point key="canvasLocation" x="3623.6641221374043" y="-35.211267605633807"/>
         </scene>
         <!--View Controller Pop Up-->
         <scene sceneID="W26-QR-1pg">
@@ -666,23 +666,22 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2vL-ez-38U">
                                 <rect key="frame" x="0.0" y="602" width="393" height="250"/>
                                 <subviews>
-                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="100" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Qd0-Se-Het">
-                                        <rect key="frame" x="24" y="16" width="345" height="190"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="100" sectionHeaderHeight="28" estimatedSectionHeaderHeight="-1" sectionFooterHeight="28" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Qd0-Se-Het">
+                                        <rect key="frame" x="0.0" y="24" width="393" height="182"/>
                                     </tableView>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="Qd0-Se-Het" secondAttribute="bottom" constant="44" id="5d6-MK-WwG"/>
-                                    <constraint firstAttribute="trailing" secondItem="Qd0-Se-Het" secondAttribute="trailing" constant="24" id="Nhd-DE-lqs"/>
-                                    <constraint firstItem="Qd0-Se-Het" firstAttribute="leading" secondItem="2vL-ez-38U" secondAttribute="leading" constant="24" id="RZ6-NY-nRi"/>
-                                    <constraint firstItem="Qd0-Se-Het" firstAttribute="top" secondItem="2vL-ez-38U" secondAttribute="top" constant="16" id="hhd-Xt-I0y"/>
+                                    <constraint firstAttribute="trailing" secondItem="Qd0-Se-Het" secondAttribute="trailing" id="Nhd-DE-lqs"/>
+                                    <constraint firstItem="Qd0-Se-Het" firstAttribute="leading" secondItem="2vL-ez-38U" secondAttribute="leading" id="RZ6-NY-nRi"/>
+                                    <constraint firstItem="Qd0-Se-Het" firstAttribute="top" secondItem="2vL-ez-38U" secondAttribute="top" constant="24" id="hhd-Xt-I0y"/>
                                     <constraint firstAttribute="height" constant="250" id="pwn-Qx-WKR"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="4AH-fb-ryv"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.5" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="4AH-fb-ryv" firstAttribute="trailing" secondItem="nYA-bH-inv" secondAttribute="trailing" id="1iG-VX-YD6"/>
                             <constraint firstItem="2vL-ez-38U" firstAttribute="top" secondItem="nYA-bH-inv" secondAttribute="bottom" id="LCY-8g-RQQ"/>

@@ -35,7 +35,7 @@ class ViewController4: UIViewController {
 
     private let m3u8Url =  "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8" //4
 //    private let m3u8Url =  "https://res.cloudinary.com/triggerz-eu-cld/raw/upload/v1613557055/HabitDrivers_for_Teams-subtitile-test.m3u8" //1
-//    private let m3u8Url =  "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" //0
+//    private let m3u8Url =  "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" //0 // high quality
 //    private let m3u8Url =  "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8" //0
 
     private let subtitleRemoteUrl = URL(string: "https://raw.githubusercontent.com/furkanhatipoglu/AVPlayerViewController-Subtitles/master/Example/AVPlayerViewController-Subtitles/trailer_720p.srt")
@@ -49,11 +49,22 @@ class ViewController4: UIViewController {
     var subtitles: [Subtitle] = [] 
     
     var selectedSubtitle: Subtitle? = nil
+    var selectedIndexPath: IndexPath? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback, options: [])
+//        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback, options: [])
+//        try? AVAudioSession.sharedInstance().setActive(true)
+//        
+        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch(let error) {
+            print(error.localizedDescription)
+        }
+
         
         startPlayer()
     }
@@ -80,10 +91,12 @@ class ViewController4: UIViewController {
     
     private func setupUI() {
         subtitleLabel.isHidden = true
-        loader.startAnimating()
-
         ccButton.tintColor = .systemGray
+        playerViewController.showsPlaybackControls = false
         
+        loader.startAnimating()
+        loader.hidesWhenStopped = true
+        playerView.bringSubviewToFront(loader)
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -91,9 +104,14 @@ class ViewController4: UIViewController {
             if player.status == .readyToPlay {
 //                videoPlayer?.play()
                 // visible button
+                loader.stopAnimating()
             } else if player.status == .failed {
 //                stopBtnPressed(UIButton())
+                loader.startAnimating()
+            } else {
+                loader.startAnimating()
             }
+            
         }
     }
     
@@ -152,7 +170,7 @@ class ViewController4: UIViewController {
         }
 //        parseSub()
         initSlider()
-        loader.stopAnimating()
+//        loader.stopAnimating()
 
     }
     
@@ -178,26 +196,15 @@ class ViewController4: UIViewController {
     }
     
     private func parseSub() {
-        
         let m3u8URL = URL(string: self.m3u8Url)!
         parseM3U8Subtitles(from: m3u8URL) { subtitles in
-            print("Subtitles:")
+
             self.subtitles = subtitles
             
-//            self.showCC = true
-            
-
-//            // Add subtitles
-//            self.playerViewController.open(fileFromRemote: self.subtitles[0].url)
-//            //            self.playerViewController.open(fileFromRemote: subtitleRemoteUrl!)
-//            self.playerViewController.addSubtitles()
-//            self.playerViewController.subtitleLabel?.textColor = UIColor.red
-
             for subtitle in subtitles {
                 print("Language: \(subtitle.language), URL: \(subtitle.url)")
             }
         }
-        
     }
     
     @IBAction private func adjustBrightness(_ sender: Any) {
@@ -222,14 +229,13 @@ class ViewController4: UIViewController {
         subtitleLabel.isHidden = !subtitleLabel.isHidden
 
         
-        if let vc = ViewControllerPopUp.initVC(with: subtitles) {
+        if let vc = ViewControllerPopUp.initVC(with: subtitles, selectedIndexPath: selectedIndexPath ?? [0,0]) {
             vc.modalPresentationStyle = .overCurrentContext
-//            vc.modalPresentationStyle = .overCurrentContext
             vc.modalTransitionStyle = .crossDissolve
             
-            vc.onSelection = { subtitle in
+            vc.onSelection = { subtitle, index in
                 self.selectedSubtitle = subtitle
-                
+                self.selectedIndexPath = index
                 self.ccButton.tintColor = .systemBlue
                 
                 // Add subtitles
@@ -240,15 +246,14 @@ class ViewController4: UIViewController {
                 self.playerViewController.subtitleLabel?.font = UIFont(name: "System", size: 6)
             }
             
-            
             vc.onDeSelection = {
                 self.selectedSubtitle = nil
-                
+                self.selectedIndexPath = nil
                 self.ccButton.tintColor = .systemGray
                 self.playerViewController.subtitleLabel?.textColor = .clear
             }
+            
             present(vc, animated: true)
-                        
         }
         
         
@@ -348,93 +353,8 @@ class ViewController4: UIViewController {
 //        if let vc = storyboard?.instantiateViewController(withIdentifier: "ViewController3") as? ViewController3 {
 //            self.navigationController?.pushViewController(vc, animated: true)
 //        }
-        
-        
     }
-    
 }
-
-
-//extension ViewController4: UITableViewDataSource {
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return subtitles.count + 1
-//    }
-//
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        guard let cell = tableView.dequeueReusableCell(withIdentifier: SubtitlesTableViewCell.identifier, for: indexPath) as? SubtitlesTableViewCell else { return UITableViewCell() }
-//        if indexPath.row == 0 {
-//            cell.subtitleLabel.text = "Off"
-//        } else {
-//            cell.subtitleLabel.text = subtitles[indexPath.row - 1].language
-//        }
-//        return cell
-//    }
-//
-//}
-
-
-//extension ViewController4: UITableViewDelegate {
-//    func calculateHeightForRowAtIndexPath(_ indexPath: IndexPath) -> CGFloat {
-//            // Implement your logic to calculate the height based on content
-//            // You may need to measure the height of your text, images, etc.
-////            return calculatedHeight
-//        return CGFloat( subtitles.count * 10)
-//    }
-//
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-////        return calculateHeightForRowAtIndexPath(indexPath)
-//        return 30
-//    }
-//
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//
-//        if let cell = tableView.cellForRow(at: indexPath) as? SubtitlesTableViewCell {
-//
-//            cell.setSelected(true, animated: true)
-//
-////            tableView.deselectRow(at: tableView.indexPathForSelectedRow!, animated: true)
-//
-//            if indexPath.row == 0 {
-//                selectedSubtitle = nil
-//                print("selected ", indexPath.row, selectedSubtitle )
-//
-//                self.playerViewController.subtitleLabel?.textColor = .clear
-//                ccButton.tintColor = .systemGray
-//
-//
-//            } else if indexPath.row == 1 {
-//                selectedSubtitle = subtitles[indexPath.row - 1]
-//                print("selected ", indexPath.row, selectedSubtitle )
-//                ccButton.tintColor = .systemBlue
-//
-//                // Add subtitles
-//                self.playerViewController.open(fileFromRemote: self.selectedSubtitle!.url)
-//
-//                self.playerViewController.addSubtitles()
-//                self.playerViewController.subtitleLabel?.textColor = UIColor.white
-//                self.playerViewController.subtitleLabel?.font = UIFont(name: "System", size: 6)
-//            } else {
-//                selectedSubtitle = subtitles[indexPath.row - 1]
-//                print("selected ", indexPath.row, selectedSubtitle )
-//                ccButton.tintColor = .systemBlue
-//
-//                // Add subtitles
-//                self.playerViewController.open(fileFromRemote: self.selectedSubtitle!.url)
-//
-//                self.playerViewController.addSubtitles()
-//                self.playerViewController.subtitleLabel?.textColor = UIColor.red
-//                self.playerViewController.subtitleLabel?.font = UIFont(name: "System", size: 6)
-//            }
-//
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-//                self.subtitleLabel.isHidden = true
-//            }
-//        }
-//
-//
-//    }
-//}
-
 
 extension ViewController4 {
 
@@ -491,7 +411,6 @@ extension ViewController4 {
                 if let url = URL(string: urlString) {
                     let subtitle = Subtitle(language: language, url: url)
                     subtitles.append(subtitle)
-//                    ccButton.isHidden = false
                 }
             }
             else {
@@ -500,17 +419,12 @@ extension ViewController4 {
         }
         
         let url = URL(string: "https://raw.githubusercontent.com/furkanhatipoglu/AVPlayerViewController-Subtitles/master/Example/AVPlayerViewController-Subtitles/trailer_720p.srt")
-        subtitles.append(Subtitle(language: "lang", url: url!))
+        subtitles.append(Subtitle(language: "lang0", url: url!))
         subtitles.append(Subtitle(language: "lang1", url: url!))
         subtitles.append(Subtitle(language: "lang2", url: url!))
         subtitles.append(Subtitle(language: "lang3", url: url!))
         subtitles.append(Subtitle(language: "lang4", url: url!))
         subtitles.append(Subtitle(language: "lang5", url: url!))
-        
-
-//        if subtitles.count > 0 {
-//            ccButton.isHidden = false
-//        }
         
         return subtitles
     }
